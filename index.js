@@ -1,10 +1,11 @@
 const express = require("express")
 const app = express()
+const cors = require("cors")
 
 const {initializeDatabase} = require("./db/db.connect");
 const Books = require("./models/book.model");
-const { get } = require("mongoose");
 
+app.use(cors())
 app.use(express.json())
 
 
@@ -16,11 +17,10 @@ app.get("/", (req, res) => {
 })
 
 
-async function createMovie(newBook){
+async function createBook(newBook){
   try {
       const book = new Books(newBook);
       const saveBook = await book.save();
-      return saveBook
   } catch (error) {
       throw error
   }
@@ -28,7 +28,7 @@ async function createMovie(newBook){
 
 app.post("/books", async (req, res) => {
   try {
-      const saveBook = await createMovie(req.body);
+      const saveBook = await createBook(req.body);
       res.status(201).json({message: "Books added successfully", book: saveBook})
   } catch (error) {
      res.status(500).json({error: "Failed to add Books"})
